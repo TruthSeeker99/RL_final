@@ -151,9 +151,9 @@ def record_single_video(env, agent, video_folder, video_length=10240, env_id=Non
     while episode_count < episodes:
         preprocess(observation, width=width, height=height)
         observation = convert2order(observation)
-        action, states = agent.predict(
+        action, _ = agent.predict(
             observation,
-            state=states,
+            # state=states,
             deterministic=True)
         observation, reward, done, info = env.step(action)
         cumulative_reward += reward
