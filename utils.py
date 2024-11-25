@@ -3,7 +3,7 @@ from typing import List, OrderedDict
 import cv2
 import diambra
 import numpy as np
-from diambra.arena import EnvironmentSettings, WrappersSettings
+from diambra.arena import EnvironmentSettings, WrappersSettings, load_settings_flat_dict
 from diambra.arena.stable_baselines3.make_sb3_env import make_sb3_env
 from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv, SubprocVecEnv
 
@@ -16,27 +16,35 @@ def convert2order(d):
         result[i] = d[i]
     return result
 
-def build_env(no_resize: bool = False, sb3: bool = True, render_mode=None, all_settings=None):
+def build_env(no_resize: bool = False, sb3: bool = True, render_mode=None, all_settings=None, test=False):
     # Settings
 
-    settings = EnvironmentSettings()
-    if not no_resize:
-        settings.frame_shape = all_settings['basic']['frame_shape']
-    settings.step_ratio = all_settings['basic']['step_ratio']  # action every 3 frames
-    settings.difficulty = all_settings['basic']['difficulty']
-    settings.characters = all_settings['basic']['characters']
+    # settings = EnvironmentSettings()
+    # if not no_resize:
+    #     settings.frame_shape = all_settings['basic']['frame_shape']
+    settings = load_settings_flat_dict(EnvironmentSettings, all_settings['basic'])
+    if test:
+        settings.continue_game = 0.0
+    if no_resize:
+        settings.frame_shape = (0, 0, 0)
+    # settings.step_ratio = all_settings['basic']['step_ratio']  # action every 3 frames
+    # settings.difficulty = all_settings['basic']['difficulty']
+    # settings.characters = all_settings['basic']['characters']
     # settings.frame_shape = (224, 384, 1)
     # settings.hardcore = True
     # Wrappers Settings
-    wrappers_settings = WrappersSettings()
-    wrappers_settings.normalize_reward = all_settings['wrapper']['normalize_reward']
-    wrappers_settings.stack_frames = all_settings['wrapper']['stack_frames']
-    wrappers_settings.scale = all_settings['wrapper']['scale']
-    wrappers_settings.exclude_image_scaling = all_settings['wrapper']['exclude_image_scaling']
-    wrappers_settings.flatten = all_settings['wrapper']['flatten']
-    wrappers_settings.filter_keys = all_settings['wrapper']['filter_keys']
-    wrappers_settings.role_relative = all_settings['wrapper']['role_relative']
-    wrappers_settings.add_last_action = all_settings['wrapper']['add_last_action']
+    # wrappers_settings = WrappersSettings()
+    # wrappers_settings.normalize_reward = all_settings['wrapper']['normalize_reward']
+    # wrappers_settings.normalization_factor = all_settings['wrapper']['normalization_factor']
+    # wrappers_settings.stack_frames = all_settings['wrapper']['stack_frames']
+    # wrappers_settings.stack_actions = all_settings['wrapper']['stack_actions']
+    # wrappers_settings.scale = all_settings['wrapper']['scale']
+    # wrappers_settings.exclude_image_scaling = all_settings['wrapper']['exclude_image_scaling']
+    # wrappers_settings.flatten = all_settings['wrapper']['flatten']
+    # wrappers_settings.filter_keys = all_settings['wrapper']['filter_keys']
+    # wrappers_settings.role_relative = all_settings['wrapper']['role_relative']
+    # wrappers_settings.add_last_action = all_settings['wrapper']['add_last_action']
+    wrappers_settings = load_settings_flat_dict(WrappersSettings, all_settings['wrapper'])
 
     config = {"policy_type": "MultiInputPolicy"}
 
@@ -120,7 +128,7 @@ def record_video(env, agent, video_folder, video_length=10240, env_id=None, num_
     env.close()
 
 
-def record_single_video(env, agent, video_folder, video_length=10240, env_id=None):
+def record_single_video(env, agent, video_folder, video_length=10240, env_id=None, all_settings=None, episodes=1):
     # env = DummyVecEnv([lambda: env])
     if not isinstance(env, DummyVecEnv) and not isinstance(env, SubprocVecEnv):
         env = DummyVecEnv([lambda: env])
@@ -128,7 +136,7 @@ def record_single_video(env, agent, video_folder, video_length=10240, env_id=Non
         env,
         video_folder,
         record_video_trigger=lambda x: x == 0,
-        video_length=video_length,
+        video_length=video_length * episodes,
         name_prefix=f"trained-agent-{env_id}"
     )
 
@@ -136,9 +144,12 @@ def record_single_video(env, agent, video_folder, video_length=10240, env_id=Non
     observation = env.reset()
     states = None
     cumulative_reward = 0.0
+    height = all_settings['basic']['frame_shape'][0]
+    width = all_settings['basic']['frame_shape'][1]
+    episode_count = 0
 
-    while True:
-        preprocess(observation)
+    while episode_count < episodes:
+        preprocess(observation, width=width, height=height)
         observation = convert2order(observation)
         action, states = agent.predict(
             observation,
@@ -151,6 +162,8 @@ def record_single_video(env, agent, video_folder, video_length=10240, env_id=Non
 
         if done.any():
             # observation = env.reset()
-            break
+            # break
+            episode_count += 1
+            cumulative_reward = 0
 
     env.close()

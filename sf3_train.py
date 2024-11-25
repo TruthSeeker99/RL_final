@@ -5,8 +5,10 @@ import diambra.arena
 from diambra.arena.stable_baselines3.make_sb3_env import make_sb3_env, EnvironmentSettings, WrappersSettings, \
     RecordingSettings
 from diambra.arena.stable_baselines3.sb3_utils import AutoSave, linear_schedule
+from diambra.engine import SpaceTypes
 from stable_baselines3.common.vec_env import SubprocVecEnv
 
+from settings import all_settings
 from utils import record_video, build_env
 
 from stable_baselines3 import PPO
@@ -51,21 +53,28 @@ def main(all_settings):
     #             batch_size=512, # 512,
     #             n_epochs=10,
     #             gamma=0.94)
-    # lr_schedule = linear_schedule(2.5e-4, 2.5e-6)
-    # clip_range_schedule = linear_schedule(0.15, 0.025)
-    agent = PPO('MultiInputPolicy', env, verbose=1, device='cuda',
-                # learning_rate=lr_schedule,
-                # clip_range=clip_range_schedule
-                )
-    # print(agent.policy.action_net)
-    # Train the agent
-    # for _ in range(200):
+    lr_schedule = linear_schedule(2.5e-4, 2.5e-6)
+    clip_range_schedule = linear_schedule(0.15, 0.025)
 
     model_folder = all_settings['agent']['model_folder']
     model_checkpoint = all_settings['agent']['model_checkpoint']
     autosave_freq = all_settings['agent']['autosave_freq']
     time_steps = all_settings['agent']['time_steps']
 
+
+    agent = PPO('MultiInputPolicy', env, verbose=1, device='cuda',
+                learning_rate=lr_schedule,
+                clip_range=clip_range_schedule,
+                n_steps=4096,
+                # n_steps=1024,
+                batch_size=1024,  # 512,
+                n_epochs=10,
+                gamma=0.94,
+                tensorboard_log=all_settings['agent']['log_dir']
+                )
+    # print(agent.policy.action_net)
+    # Train the agent
+    # for _ in range(200):
     # Create the callback: autosave every USER DEF steps
 
     auto_save_callback = AutoSave(check_freq=autosave_freq, num_envs=num_envs,
@@ -90,29 +99,4 @@ def main(all_settings):
 
 
 if __name__ == '__main__':
-    all_settings = {
-        'basic': {
-            'step_ratio': 3,
-            'difficulty': 4,
-            'frame_shape': (112, 192, 1),
-            'characters': 'Ken',
-            'super_art': 1
-        },
-        'wrapper': {
-            'normalize_reward': True,
-            'stack_frames': 10,
-            'scale': True,
-            'exclude_image_scaling': True,
-            'flatten': True,
-            'filter_keys': [],
-            'role_relative': True,
-            'add_last_action': True
-        },
-        'agent': {
-            'model_folder': './ckpts/',
-            'model_checkpoint': 'PPO',
-            'autosave_freq': 10000,
-            'time_steps': 100000
-        }
-    }
     main(all_settings)
