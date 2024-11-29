@@ -42,7 +42,7 @@ def main(all_settings):
     # print('Rank:', env.env_settings.rank)
     # print("Activated {} environment(s)".format(num_envs))
     # print('>>>action space:', env.action_space, int(len(env.action_space.nvec)))
-    env, num_envs = build_env(False, sb3=True, render_mode='human', all_settings=all_settings)
+    env, num_envs = build_env(False, sb3=True, render_mode='rgb_array', all_settings=all_settings)
     print('>>>obs space:', env.observation_space)
     # Instantiate the agent
     # policy_kwargs = dict(net_arch=dict(pi=[32, 32], vf=[32, 32]))
