@@ -42,8 +42,8 @@ def main(all_settings):
     # print('Rank:', env.env_settings.rank)
     # print("Activated {} environment(s)".format(num_envs))
     # print('>>>action space:', env.action_space, int(len(env.action_space.nvec)))
-    # print('>>>obs space:', env.observation_space)
     env, num_envs = build_env(False, sb3=True, render_mode='human', all_settings=all_settings)
+    print('>>>obs space:', env.observation_space)
     # Instantiate the agent
     # policy_kwargs = dict(net_arch=dict(pi=[32, 32], vf=[32, 32]))
     # agent = PPO(CustomActorCriticPolicy, env, verbose=1)
@@ -68,8 +68,9 @@ def main(all_settings):
                 n_steps=4096,
                 # n_steps=1024,
                 batch_size=1024,  # 512,
-                n_epochs=10,
+                n_epochs=4,
                 gamma=0.94,
+                gae_lambda=0.95,
                 tensorboard_log=all_settings['agent']['log_dir']
                 )
     # print(agent.policy.action_net)

@@ -29,8 +29,8 @@ if __name__ == '__main__':
 
     model_folder = './ckpts/'
     model_checkpoint = 'PPO'
-    new_model_checkpoint = model_checkpoint + "_final"
-    # new_model_checkpoint = model_checkpoint + "_autosave_50000"
+    # new_model_checkpoint = model_checkpoint + "_final"
+    new_model_checkpoint = model_checkpoint + "_autosave_1031184"
     model_path = os.path.join(model_folder, new_model_checkpoint)
     agent.load(model_path)
     record_single_video(test_env,
