@@ -2,7 +2,8 @@ from diambra.arena import SpaceTypes, Roles
 
 all_settings = {
     'basic': {
-        'step_ratio': 3,
+        # 'step_ratio': 3,
+        'step_ratio': 1,
         'difficulty': 8,
         'frame_shape': (112, 192, 1),
         'role': Roles.P1,
@@ -13,8 +14,10 @@ all_settings = {
     'wrapper': {
         'normalize_reward': True,
         'normalization_factor': 0.5,
-        'stack_frames': 9,
-        'stack_actions': 6,
+        # 'stack_frames': 9,
+        # 'stack_actions': 6,
+        'stack_frames': 24,
+        'stack_actions': 12,
         # 'repeat_action': 8,
         'scale': True,
         'exclude_image_scaling': True,

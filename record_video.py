@@ -34,4 +34,4 @@ if __name__ == '__main__':
     model_path = os.path.join(model_folder, new_model_checkpoint)
     agent.load(model_path)
     record_single_video(test_env,
-                        agent, video_folder='./videos/', env_id=model_checkpoint, all_settings=all_settings, episodes=5)
+                        agent, video_folder='./videos/', env_id=model_checkpoint, all_settings=all_settings, episodes=1)

@@ -1,6 +1,61 @@
 import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
+import copy
+import queue
+from time import sleep
+
+
+class ComboWrapper(gym.Wrapper):
+    def __init__(self, env):
+        super(ComboWrapper, self).__init__(env)
+        # self.combo_list = [
+        #     # [[0,1], [0,4], [0,0]], # Hiza-Geri
+        #     # [[5,7], [0,0]], # Seoi-Nage
+        #     # [[1,7], [0,0]], # Jigoku-Guruma
+        #     # [[1,5], [0,0]], # Inazuma-Kakato-Wari
+        #     # [[0,2], [0,3], [0,0]], # Target-Combo
+        #     # special Moves
+        #     [[7,0], [6,0], [5,0], [0,3], [0,0]], # Hadoken
+        #     [[7,0], [8,0], [1,0], [0,3], [0,0]], # Hadoken
+        #     [[7,0], [6,0], [5,0], [0,6], [0,0]], # Hadoken
+        #     [[7,0], [8,0], [1,0], [0,6], [0,0]], # Hadoken
+        #     # only directions
+        #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,3], [0,0]], # Shoryu-Reppa
+        #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,3], [0,0]], # Shoryu-Reppa
+        #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,6], [0,0]], # Shinryu-Ken
+        #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,6], [0,0]], # Shinryu-Ken
+        #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,6], [0,6], [0,0]], # Shinryu-Jinrai-Kyaku
+        #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,6], [0,6], [0,0]], # Shinryu-Jinrai-Kyaku
+        # ]
+        self.combo_list = [
+            # special Moves
+            [[7, 0], [6, 0], [5, 2]],  # Hadoken
+            [[7, 0], [8, 0], [1, 2]],  # Hadoken
+            [[7, 0], [6, 0], [5, 5]],  # Hurricane Kick
+            [[7, 0], [8, 0], [1, 5]],  # Hurricane Kick
+            [[5, 0], [7, 0], [6, 2]],  # Shoryuken
+            [[1, 0], [7, 0], [8, 2]],  # Shoryuken
+            # only moves
+            [[7, 0], [6, 0], [5, 0]],  # Hurricane Kick
+            [[7, 0], [8, 0], [1, 0]],  # Hurricane Kick
+            [[5, 0], [7, 0], [6, 0]],  # Shoryuken
+            [[1, 0], [7, 0], [8, 0]],  # Shoryuken
+        ]
+        self.action_len = 3
+
+    def step(self, action):
+        if action[0] == 9:
+            # push combo in
+            # combo = queue.Queue()
+            combo_idx = action[1]
+            combo_to_use = self.combo_list[combo_idx]
+            for i in range(self.action_len):
+                obs, reward, done, truncated, info = self.env.step(combo_to_use[i])
+        else:
+            for i in range(self.action_len):
+                obs, reward, done, truncated, info = self.env.step(action)
+        return obs, reward, done, truncated, info
 
 
 class MultiDiscreteToDiscreteWrapper(gym.ActionWrapper):
@@ -9,19 +64,58 @@ class MultiDiscreteToDiscreteWrapper(gym.ActionWrapper):
 
         # Ensure the original action space is MultiDiscrete
         assert isinstance(env.action_space, spaces.MultiDiscrete)
+        # self.combo_list = [
+        #     # [[0,1], [0,4], [0,0]], # Hiza-Geri
+        #     # [[5,7], [0,0]], # Seoi-Nage
+        #     # [[1,7], [0,0]], # Jigoku-Guruma
+        #     # [[1,5], [0,0]], # Inazuma-Kakato-Wari
+        #     # [[0,2], [0,3], [0,0]], # Target-Combo
+        #     # special Moves
+        #     [[7,0], [6,0], [5,0], [0,3], [0,0]], # Hadoken
+        #     [[7,0], [8,0], [1,0], [0,3], [0,0]], # Hadoken
+        #     [[7,0], [6,0], [5,0], [0,6], [0,0]], # Hadoken
+        #     [[7,0], [8,0], [1,0], [0,6], [0,0]], # Hadoken
+        #     # super art
+        #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,3], [0,0]], # Shoryu-Reppa
+        #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,3], [0,0]], # Shoryu-Reppa
+        #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,6], [0,0]], # Shinryu-Ken
+        #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,6], [0,0]], # Shinryu-Ken
+        #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,6], [0,6], [0,0]], # Shinryu-Jinrai-Kyaku
+        #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,6], [0,6], [0,0]], # Shinryu-Jinrai-Kyaku
+        # ]
 
-        # Store the original MultiDiscrete action space
-        self.multi_discrete_space = env.action_space
+        # # Store the original MultiDiscrete action space
+        # self.multi_discrete_space = env.action_space
 
-        # Calculate the total number of discrete actions needed
-        self.n_discrete_actions = np.prod(self.multi_discrete_space.nvec)
+        # # Calculate the total number of discrete actions needed
+        # self.n_discrete_actions = np.prod(self.multi_discrete_space.nvec)
 
-        # Define the new discrete action space
-        self.action_space = spaces.Discrete(self.n_discrete_actions)
+        # # Define the new discrete action space
+        # self.action_space = spaces.Discrete(self.n_discrete_actions)
+        self.action_space = spaces.MultiDiscrete([10, 10])
+        # self.reset_without_seed = copy.deepcopy(env.reset)
+        # self.combo = queue.Queue()
 
     def action(self, action):
-        # Convert discrete action to multi-discrete action
-        return [action // 10, action % 10]
+        return action
+        # # print(action.shape)
+        # if self.combo.empty():
+        #     if action[0] < 9:
+        #         return action
+        #     else:
+        #         # push combo in
+        #         combo_idx = action[1]
+        #         combo_to_use = self.combo_list[combo_idx]
+        #         for i in range(len(combo_to_use)):
+        #             self.combo.put(combo_to_use[i])
+        #         return self.combo.get()
+        # else:
+        #     return self.combo.get()
+
+    # def reset(self, seed):
+    #     self.seed(seed)
+    #     self.reset_without_seed()
+    #     return self.state
 
     # def reverse_action(self, action):
     #     # Convert multi-discrete action to discrete action
@@ -32,6 +126,16 @@ class MultiDiscreteToDiscreteWrapper(gym.ActionWrapper):
     #         multiplier *= n
     #     return discrete_action
 
+
+class CustomMultiDiscreteEnv(gym.Env):
+    def __init__(self, env):
+        super(CustomMultiDiscreteEnv, self).__init__()
+        # Your initialization code here
+
+    def reset(self, seed):
+        self.seed(seed)
+        self.reset()
+        return self.state
 
 # # Example usage with a custom environment
 # class CustomMultiDiscreteEnv(gym.Env):
