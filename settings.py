@@ -4,7 +4,7 @@ all_settings = {
     'basic': {
         # 'step_ratio': 3,
         'step_ratio': 1,
-        'difficulty': 4,
+        'difficulty': 8,
         'frame_shape': (112, 192, 1),
         'role': Roles.P1,
         'characters': 'Ken',
