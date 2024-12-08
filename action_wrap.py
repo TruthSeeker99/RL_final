@@ -28,7 +28,7 @@ class ComboWrapper(gym.Wrapper):
         #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,6], [0,6], [0,0]], # Shinryu-Jinrai-Kyaku
         #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,6], [0,6], [0,0]], # Shinryu-Jinrai-Kyaku
         # ]
-        self.combo_list = [
+        self.combo_list = np.array([
             # special Moves
             [[7, 0], [6, 0], [5, 2]],  # Hadoken
             [[7, 0], [8, 0], [1, 2]],  # Hadoken
@@ -41,20 +41,31 @@ class ComboWrapper(gym.Wrapper):
             [[7, 0], [8, 0], [1, 0]],  # Hurricane Kick
             [[5, 0], [7, 0], [6, 0]],  # Shoryuken
             [[1, 0], [7, 0], [8, 0]],  # Shoryuken
-        ]
+        ])
         self.action_len = 3
 
     def step(self, action):
+        # print(type(action), action, action[0] == 9)
+        done, truncated = False, False
         if action[0] == 9:
             # push combo in
             # combo = queue.Queue()
             combo_idx = action[1]
             combo_to_use = self.combo_list[combo_idx]
+            # print(combo_to_use)
             for i in range(self.action_len):
-                obs, reward, done, truncated, info = self.env.step(combo_to_use[i])
+                if not (done or truncated):
+                    obs, reward, done, truncated, info = self.env.step(combo_to_use[i])
+                else:
+                    break
         else:
             for i in range(self.action_len):
-                obs, reward, done, truncated, info = self.env.step(action)
+                # print(i, action)
+                if not (done or truncated):
+                    obs, reward, done, truncated, info = self.env.step(action)
+                else:
+                    break
+        # print(obs['action'].shape)
         return obs, reward, done, truncated, info
 
 

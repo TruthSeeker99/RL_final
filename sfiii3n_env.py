@@ -51,8 +51,22 @@ def main():
         # else:
         #     actions = np.array([0, 0])
         # print(actions)
+        combo_list = [
+            # special Moves
+            [[7, 0], [6, 0], [5, 2], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],  # Hadoken
+            [[7, 0], [8, 0], [1, 0], [0, 2]],  # Hadoken
+            [[7, 0], [6, 0], [5, 5]],  # Hurricane Kick
+            [[7, 0], [8, 0], [1, 5]],  # Hurricane Kick
+            [[5, 0], [7, 0], [6, 2]],  # Shoryuken
+            [[1, 0], [7, 0], [8, 2]],  # Shoryuken
+            # only moves
+            [[7, 0], [6, 0], [5, 0]],  # Hurricane Kick
+            [[7, 0], [8, 0], [1, 0]],  # Hurricane Kick
+            [[5, 0], [7, 0], [6, 0]],  # Shoryuken
+            [[1, 0], [7, 0], [8, 0]],  # Shoryuken
+        ]
 
-        combo = [[7, 0], [6, 0], [5, 7], [0 ,0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
+        combo = combo_list[0]
         # combo = [[4, 0], [4, 0], [4, 0], [7, 0], [8, 0], [1, 4], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
         cur_step = count % len(combo)
         actions = np.array(combo[cur_step])
