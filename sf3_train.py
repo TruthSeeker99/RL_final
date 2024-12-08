@@ -65,6 +65,7 @@ def main(all_settings):
     agent = PPO('MultiInputPolicy', env, verbose=1, device='cuda',
                 learning_rate=lr_schedule,
                 clip_range=clip_range_schedule,
+                # n_steps=4096,
                 n_steps=4096,
                 # n_steps=1024,
                 batch_size=1024,  # 512,

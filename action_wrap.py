@@ -9,25 +9,6 @@ from time import sleep
 class ComboWrapper(gym.Wrapper):
     def __init__(self, env):
         super(ComboWrapper, self).__init__(env)
-        # self.combo_list = [
-        #     # [[0,1], [0,4], [0,0]], # Hiza-Geri
-        #     # [[5,7], [0,0]], # Seoi-Nage
-        #     # [[1,7], [0,0]], # Jigoku-Guruma
-        #     # [[1,5], [0,0]], # Inazuma-Kakato-Wari
-        #     # [[0,2], [0,3], [0,0]], # Target-Combo
-        #     # special Moves
-        #     [[7,0], [6,0], [5,0], [0,3], [0,0]], # Hadoken
-        #     [[7,0], [8,0], [1,0], [0,3], [0,0]], # Hadoken
-        #     [[7,0], [6,0], [5,0], [0,6], [0,0]], # Hadoken
-        #     [[7,0], [8,0], [1,0], [0,6], [0,0]], # Hadoken
-        #     # only directions
-        #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,3], [0,0]], # Shoryu-Reppa
-        #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,3], [0,0]], # Shoryu-Reppa
-        #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,6], [0,0]], # Shinryu-Ken
-        #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,6], [0,0]], # Shinryu-Ken
-        #     [[7,0], [6,0], [5,0], [7,0], [6,0], [5,0], [0,6], [0,6], [0,0]], # Shinryu-Jinrai-Kyaku
-        #     [[7,0], [8,0], [1,0], [7,0], [8,0], [1,0], [0,6], [0,6], [0,0]], # Shinryu-Jinrai-Kyaku
-        # ]
         self.combo_list = np.array([
             # special Moves
             [[7, 0], [6, 0], [5, 2]],  # Hadoken
@@ -37,10 +18,10 @@ class ComboWrapper(gym.Wrapper):
             [[5, 0], [7, 0], [6, 2]],  # Shoryuken
             [[1, 0], [7, 0], [8, 2]],  # Shoryuken
             # only moves
-            [[7, 0], [6, 0], [5, 0]],  # Hurricane Kick
-            [[7, 0], [8, 0], [1, 0]],  # Hurricane Kick
-            [[5, 0], [7, 0], [6, 0]],  # Shoryuken
-            [[1, 0], [7, 0], [8, 0]],  # Shoryuken
+            [[7, 0], [6, 0], [5, 0]],
+            [[7, 0], [8, 0], [1, 0]],
+            [[5, 0], [7, 0], [6, 0]],
+            [[1, 0], [7, 0], [8, 0]],
         ])
         self.action_len = 3
 

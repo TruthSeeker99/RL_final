@@ -221,8 +221,8 @@ def record_single_video(env, agent, video_folder, video_length=10240, env_id=Non
             observation,
             # state=states,
             deterministic=True)
-        print(action, type(action))
-        action = [[9, 1]]
+        # print(action, type(action))
+        # action = [[9, 1]]
         observation, reward, done, info = env.step(action)
         cumulative_reward += reward
 
