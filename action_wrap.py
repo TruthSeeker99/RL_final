@@ -9,19 +9,31 @@ from time import sleep
 class ComboWrapper(gym.Wrapper):
     def __init__(self, env):
         super(ComboWrapper, self).__init__(env)
+        # self.combo_list = np.array([
+        #     # special Moves
+        #     [[7, 0], [6, 0], [5, 2]],  # Hadoken
+        #     [[7, 0], [8, 0], [1, 2]],  # Hadoken
+        #     [[7, 0], [6, 0], [5, 5]],  # Hurricane Kick
+        #     [[7, 0], [8, 0], [1, 5]],  # Hurricane Kick
+        #     [[5, 0], [7, 0], [6, 2]],  # Shoryuken
+        #     [[1, 0], [7, 0], [8, 2]],  # Shoryuken
+        #     # only moves
+        #     [[7, 0], [6, 0], [5, 0]],
+        #     [[7, 0], [8, 0], [1, 0]],
+        #     [[5, 0], [7, 0], [6, 0]],
+        #     [[1, 0], [7, 0], [8, 0]],
+        # ])
         self.combo_list = np.array([
-            # special Moves
-            [[7, 0], [6, 0], [5, 2]],  # Hadoken
-            [[7, 0], [8, 0], [1, 2]],  # Hadoken
-            [[7, 0], [6, 0], [5, 5]],  # Hurricane Kick
-            [[7, 0], [8, 0], [1, 5]],  # Hurricane Kick
-            [[5, 0], [7, 0], [6, 2]],  # Shoryuken
-            [[1, 0], [7, 0], [8, 2]],  # Shoryuken
-            # only moves
             [[7, 0], [6, 0], [5, 0]],
             [[7, 0], [8, 0], [1, 0]],
+            [[5, 0], [7, 0], [6, 2]],  # Shoryuken
+            [[1, 0], [7, 0], [8, 2]],  # Shoryuken
             [[5, 0], [7, 0], [6, 0]],
+            [[7, 0], [6, 0], [5, 5]],  # Hurricane Kick
+            [[7, 0], [8, 0], [1, 5]],  # Hurricane Kick
             [[1, 0], [7, 0], [8, 0]],
+            [[7, 0], [6, 0], [5, 2]],  # Hadoken
+            [[7, 0], [8, 0], [1, 2]],  # Hadoken
         ])
         self.action_len = 3
 
