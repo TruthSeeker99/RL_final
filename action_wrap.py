@@ -28,6 +28,7 @@ class ComboWrapper(gym.Wrapper):
     def step(self, action):
         # print(type(action), action, action[0] == 9)
         done, truncated = False, False
+        all_reward = 0.0
         if action[0] == 9:
             # push combo in
             # combo = queue.Queue()
@@ -37,6 +38,8 @@ class ComboWrapper(gym.Wrapper):
             for i in range(self.action_len):
                 if not (done or truncated):
                     obs, reward, done, truncated, info = self.env.step(combo_to_use[i])
+                    # print(reward)
+                    all_reward += reward
                 else:
                     break
         else:
@@ -44,10 +47,12 @@ class ComboWrapper(gym.Wrapper):
                 # print(i, action)
                 if not (done or truncated):
                     obs, reward, done, truncated, info = self.env.step(action)
+                    all_reward += reward
                 else:
                     break
         # print(obs['action'].shape)
-        return obs, reward, done, truncated, info
+        # print(all_reward)
+        return obs, all_reward, done, truncated, info
 
 
 class MultiDiscreteToDiscreteWrapper(gym.ActionWrapper):

@@ -213,6 +213,8 @@ def record_single_video(env, agent, video_folder, video_length=10240, env_id=Non
     height = all_settings['basic']['frame_shape'][0]
     width = all_settings['basic']['frame_shape'][1]
     episode_count = 0
+    count = 0
+    selected_actions = [[9, 0], [0, 0]]
 
     while episode_count < episodes:
         preprocess(observation, width=width, height=height)
@@ -223,10 +225,12 @@ def record_single_video(env, agent, video_folder, video_length=10240, env_id=Non
             deterministic=True)
         # print(action, type(action))
         # action = [[9, 1]]
+        action = np.array([selected_actions[count % len(selected_actions)]])
         observation, reward, done, info = env.step(action)
         cumulative_reward += reward
 
         print("Cumulative reward(s) =", cumulative_reward)
+        count += 1
 
         if done.any():
             # observation = env.reset()
