@@ -29,6 +29,7 @@ class ComboWrapper(gym.Wrapper):
         # print(type(action), action, action[0] == 9)
         done, truncated = False, False
         all_reward = 0.0
+        # print(action)
         if action[0] == 9:
             # push combo in
             # combo = queue.Queue()
@@ -60,7 +61,7 @@ class MultiDiscreteToDiscreteWrapper(gym.ActionWrapper):
         super(MultiDiscreteToDiscreteWrapper, self).__init__(env)
 
         # Ensure the original action space is MultiDiscrete
-        assert isinstance(env.action_space, spaces.MultiDiscrete)
+        # assert isinstance(env.action_space, spaces.MultiDiscrete)
         # self.combo_list = [
         #     # [[0,1], [0,4], [0,0]], # Hiza-Geri
         #     # [[5,7], [0,0]], # Seoi-Nage

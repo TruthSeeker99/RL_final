@@ -5,8 +5,10 @@ from typing import List, OrderedDict
 import cv2
 import diambra
 import numpy as np
-from diambra.arena import EnvironmentSettings, WrappersSettings, load_settings_flat_dict, RecordingSettings
+from diambra.arena import EnvironmentSettings, WrappersSettings, load_settings_flat_dict, RecordingSettings, \
+    EnvironmentSettingsMultiAgent
 from diambra.arena.stable_baselines3.make_sb3_env import make_sb3_env
+from diambra.engine import SpaceTypes
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.vec_env import VecVideoRecorder, DummyVecEnv, SubprocVecEnv
@@ -80,13 +82,16 @@ def make_sb3_env_new(game_id: str, env_settings: EnvironmentSettings=Environment
 
     return env, num_envs
 
-def build_env(no_resize: bool = False, sb3: bool = True, render_mode=None, all_settings=None, test=False):
+def build_env(no_resize: bool = False, sb3: bool = True, render_mode=None, all_settings=None, test=False, multi=False):
     # Settings
 
     # settings = EnvironmentSettings()
     # if not no_resize:
     #     settings.frame_shape = all_settings['basic']['frame_shape']
-    settings = load_settings_flat_dict(EnvironmentSettings, all_settings['basic'])
+    if multi:
+        settings = load_settings_flat_dict(EnvironmentSettingsMultiAgent, all_settings['basic'])
+    else:
+        settings = load_settings_flat_dict(EnvironmentSettings, all_settings['basic'])
     if test:
         settings.continue_game = 0.0
     if no_resize:
@@ -111,6 +116,12 @@ def build_env(no_resize: bool = False, sb3: bool = True, render_mode=None, all_s
     wrappers_settings = load_settings_flat_dict(WrappersSettings, all_settings['wrapper'])
 
     config = {"policy_type": "MultiInputPolicy"}
+
+    # if multi:
+    #     # If to use discrete or multi_discrete action space
+    #     settings.action_space = (settings.action_space, settings.action_space)
+    #     settings.characters = (settings.characters, settings.characters)
+    #     settings.outfits = (1, 7)
 
     # Create environment
     if sb3:

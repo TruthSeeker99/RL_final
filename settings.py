@@ -38,7 +38,19 @@ all_settings = {
         'model_folder': './ckpts/',
         'log_dir': './logs/',
         'model_checkpoint': 'PPO',
-        'autosave_freq': 31250,
+        'autosave_freq': 15600,
         'time_steps': int(5e6)
     }
 }
+
+multi_settings = all_settings.copy()
+multi_settings['basic'] = {
+        'step_ratio': 1,
+        'frame_shape': (112, 192, 1),
+        'characters': ("Ken", "Ken"),
+        'action_space': (SpaceTypes.DISCRETE, SpaceTypes.DISCRETE),
+        'outfits': (1, 7)
+        # 'characters': 'Ken',
+        # 'action_space': SpaceTypes.DISCRETE
+    }
+multi_settings['wrapper']['filter_keys'] = []
