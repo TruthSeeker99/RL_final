@@ -240,7 +240,7 @@ def record_single_video(env, agent, video_folder, video_length=10240, env_id=Non
         observation, reward, done, info = env.step(action)
         cumulative_reward += reward
 
-        print("Cumulative reward(s) =", cumulative_reward)
+        print(action, "Cumulative reward(s) =", cumulative_reward)
         count += 1
 
         if done.any():

@@ -30,8 +30,9 @@ if __name__ == '__main__':
     model_folder = './ckpts/'
     model_checkpoint = 'PPO'
     # new_model_checkpoint = model_checkpoint + "_final"
-    new_model_checkpoint = model_checkpoint + "_autosave_187488"
+    new_model_checkpoint = model_checkpoint + "_autosave_1513200"
     model_path = os.path.join(model_folder, new_model_checkpoint)
     agent.load(model_path)
-    record_single_video(test_env,
-                        agent, video_folder='./videos/', env_id=model_checkpoint, all_settings=all_settings, episodes=1)
+    record_single_video(test_env, agent,
+                        video_length=10240 * 4,
+                        video_folder='./videos/', env_id=model_checkpoint, all_settings=all_settings, episodes=1)
